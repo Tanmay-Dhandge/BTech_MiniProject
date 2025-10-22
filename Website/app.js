@@ -1,153 +1,80 @@
-var ws;
-var gateway = `ws://${window.location.hostname}/ws`;
-var reconnectInterval = null;
+// IMPORTANT: Update this with your Render URL after you deploy the backend
+const BACKEND_URL = "https://your-backend-service.onrender.com";
 
-function initWebSocket() {
-    console.log("Connecting to WebSocket:", gateway);
-    ws = new WebSocket(gateway);
-    
-    ws.onopen = () => {
-        console.log("✅ WebSocket connected");
-        document.getElementById('status').textContent = 'Connected';
-        document.querySelector('.status-dot').style.background = '#10b981';
-        if (reconnectInterval) {
-            clearInterval(reconnectInterval);
-            reconnectInterval = null;
+// --- Data Fetching ---
+async function updateSensorReadings() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/latest`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    };
-    
-    ws.onclose = () => {
-        console.log("❌ WebSocket disconnected");
-        document.getElementById('status').textContent = 'Disconnected';
+        const data = await response.json();
+
+        // Update the sensor values on the page
+        document.getElementById('insideTemp').textContent = data.insideTemp?.toFixed(1) ?? '--';
+        document.getElementById('insideHum').textContent = data.insideHum?.toFixed(1) ?? '--';
+        document.getElementById('outsideTemp').textContent = data.outsideTemp?.toFixed(1) ?? '--';
+        document.getElementById('outsideHum').textContent = data.outsideHum?.toFixed(1) ?? '--';
+        document.getElementById('outsidePress').textContent = data.outsidePress?.toFixed(0) ?? '--';
+        document.getElementById('lightLux').textContent = data.lightLux?.toFixed(1) ?? '--';
+
+        // Update the control states
+        updateControlsUI(data.controls);
+
+    } catch (error) {
+        console.error("Failed to fetch sensor data:", error);
+        document.getElementById('status').textContent = 'Error';
         document.querySelector('.status-dot').style.background = '#ef4444';
-        if (!reconnectInterval) {
-            reconnectInterval = setInterval(() => {
-                console.log("🔄 Attempting to reconnect...");
-                initWebSocket();
-            }, 2000);
-        }
-    };
-    
-    ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-    };
-    
-    ws.onmessage = (e) => {
-        console.log("📨 Received message:", e.data);
-        try {
-            var data = JSON.parse(e.data);
-            updateControls(data);
-        } catch(err) {
-            console.error("Error parsing message:", err);
-        }
-    };
-}
-
-function updateControls(data) {
-    console.log("Updating controls with data:", data);
-    var modeToggle = document.getElementById("mode-toggle");
-    var fanControl = document.getElementById("fan-control");
-    var lightControl = document.getElementById("light-control");
-    var fanStatus = document.getElementById("fan-status");
-    var lightStatus = document.getElementById("light-status");
-    
-    // Update mode toggle
-    modeToggle.checked = (data.mode === "Manual");
-    
-    // Update fan state
-    if (data.fan) {
-        fanControl.classList.add('active');
-        fanStatus.textContent = "ON";
-    } else {
-        fanControl.classList.remove('active');
-        fanStatus.textContent = "OFF";
-    }
-    
-    // Update light state
-    if (data.light) {
-        lightControl.classList.add('active');
-        lightStatus.textContent = "ON";
-    } else {
-        lightControl.classList.remove('active');
-        lightStatus.textContent = "OFF";
-    }
-    
-    // Enable/disable controls based on mode
-    if (data.mode === "Manual") {
-        console.log("✅ Manual mode - controls enabled");
-        fanControl.classList.remove('disabled');
-        lightControl.classList.remove('disabled');
-    } else {
-        console.log("⚙️ Auto mode - controls disabled");
-        fanControl.classList.add('disabled');
-        lightControl.classList.add('disabled');
     }
 }
 
-function toggleFan() {
-    var fanControl = document.getElementById("fan-control");
-    if (fanControl.classList.contains('disabled')) {
-        console.log("⚠️ Fan control is disabled (Auto mode)");
-        alert("Switch to Manual mode to control the fan");
-        return;
-    }
+// --- UI Control Updates ---
+function updateControlsUI(controls) {
+    if (!controls) return;
+
+    const modeToggle = document.getElementById("mode-toggle");
+    const fanControl = document.getElementById("fan-control");
+    const lightControl = document.getElementById("light-control");
+    const fanStatus = document.getElementById("fan-status");
+    const lightStatus = document.getElementById("light-status");
+
+    // Update mode toggle and control states
+    modeToggle.checked = (controls.mode === "Manual");
+    fanControl.classList.toggle('active', controls.fan);
+    fanStatus.textContent = controls.fan ? "ON" : "OFF";
+    lightControl.classList.toggle('active', controls.light);
+    lightStatus.textContent = controls.light ? "ON" : "OFF";
     
-    console.log("🌀 Fan clicked");
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log("   ✅ Sending 'fan-toggle'");
-        ws.send("fan-toggle");
-    } else {
-        console.log("   ❌ WebSocket not ready");
-        alert("Connection lost. Please refresh the page.");
-    }
+    // Disable buttons in Auto mode
+    fanControl.classList.toggle('disabled', controls.mode !== "Manual");
+    lightControl.classList.toggle('disabled', controls.mode !== "Manual");
 }
 
-function toggleLight() {
-    var lightControl = document.getElementById("light-control");
-    if (lightControl.classList.contains('disabled')) {
-        console.log("⚠️ Light control is disabled (Auto mode)");
-        alert("Switch to Manual mode to control the light");
-        return;
-    }
-    
-    console.log("💡 Light clicked");
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log("   ✅ Sending 'light-toggle'");
-        ws.send("light-toggle");
-    } else {
-        console.log("   ❌ WebSocket not ready");
-        alert("Connection lost. Please refresh the page.");
-    }
-}
-
-function toggleMode() {
-    console.log("⚙️ Mode toggle clicked");
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        console.log("   ✅ Sending 'mode-toggle'");
-        ws.send("mode-toggle");
-    } else {
-        console.log("   ❌ WebSocket not ready");
-        alert("Connection lost. Please refresh the page.");
-    }
-}
-
-function updateSensors() {
-    fetch("/data")
-        .then(r => r.json())
-        .then(data => {
-            document.getElementById('insideTemp').textContent = data.insideTemp.toFixed(1);
-            document.getElementById('insideHum').textContent = data.insideHum.toFixed(1);
-            document.getElementById('outsideTemp').textContent = data.outsideTemp.toFixed(1);
-            document.getElementById('outsideHum').textContent = data.outsideHum.toFixed(1);
-            document.getElementById('outsidePress').textContent = data.outsidePress.toFixed(0);
-            document.getElementById('lightLux').textContent = data.lightLux.toFixed(1);
+// --- Sending Commands to Backend ---
+async function sendCommand(command) {
+    try {
+        await fetch(`${BACKEND_URL}/control`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: command })
         });
+        // After sending a command, immediately fetch the latest state
+        updateSensorReadings();
+    } catch (error) {
+        console.error("Failed to send command:", error);
+    }
 }
 
-document.getElementById("mode-toggle").addEventListener("change", toggleMode);
+function toggleFan() { if (!document.getElementById("fan-control").classList.contains('disabled')) sendCommand('fan-toggle'); }
+function toggleLight() { if (!document.getElementById("light-control").classList.contains('disabled')) sendCommand('light-toggle'); }
+function toggleMode() { sendCommand('mode-toggle'); }
 
+// --- Initialization ---
 window.addEventListener('load', () => {
-    initWebSocket();
-    updateSensors();
-    setInterval(updateSensors, 2000);
+    document.getElementById("mode-toggle").addEventListener("change", toggleMode);
+    document.getElementById("fan-control").addEventListener("click", toggleFan);
+    document.getElementById("light-control").addEventListener("click", toggleLight);
+
+    updateSensorReadings(); // Initial fetch
+    setInterval(updateSensorReadings, 3000); // Fetch every 3 seconds
 });
