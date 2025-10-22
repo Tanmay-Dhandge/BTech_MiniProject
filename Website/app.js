@@ -1,5 +1,5 @@
 // IMPORTANT: Update this with your Render URL after you deploy the backend
-const BACKEND_URL = "https://your-backend-service.onrender.com";
+const BACKEND_URL = "https://btech-miniproject.onrender.com";
 
 // --- Data Fetching ---
 async function updateSensorReadings() {
