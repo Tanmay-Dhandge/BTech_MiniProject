@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Control</title>
+    </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Environment Control</h1>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span id="status">Connected</span>
+            </div>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" onclick="window.location.href='/'">Dashboard</button>
+            <button class="nav-btn" onclick="window.location.href='/surveillance'">Surveillance</button>
+        </nav>
+
+        <div class="grid">
+            <div class="card">
+                <h2>🌡️ Indoor</h2>
+                <div class="sensor-row">
+                    <span class="sensor-label">Temperature</span>
+                    <span class="sensor-value"><span id="insideTemp">--</span><span class="sensor-unit">°C</span></span>
+                </div>
+                <div class="sensor-row">
+                    <span class="sensor-label">Humidity</span>
+                    <span class="sensor-value"><span id="insideHum">--</span><span class="sensor-unit">%</span></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🌍 Outdoor</h2>
+                <div class="sensor-row">
+                    <span class="sensor-label">Temperature</span>
+                    <span class="sensor-value"><span id="outsideTemp">--</span><span class="sensor-unit">°C</span></span>
+                </div>
+                <div class="sensor-row">
+                    <span class="sensor-label">Humidity</span>
+                    <span class="sensor-value"><span id="outsideHum">--</span><span class="sensor-unit">%</span></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📊 Atmosphere</h2>
+                <div class="sensor-row">
+                    <span class="sensor-label">Pressure</span>
+                    <span class="sensor-value"><span id="outsidePress">--</span><span class="sensor-unit">hPa</span></span>
+                </div>
+                <div class="sensor-row">
+                    <span class="sensor-label">Light</span>
+                    <span class="sensor-value"><span id="lightLux">--</span><span class="sensor-unit">lux</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="mode-switch">
+                <h2>⚙️ Control Panel</h2>
+                <div class="toggle-group">
+                    <span class="toggle-label">Auto</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mode-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">Manual</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-item" id="fan-control" onclick="toggleFan()">
+                    <div class="control-icon">🌀</div>
+                    <div class="control-name">Fan</div>
+                    <div class="control-status" id="fan-status">OFF</div>
+                </div>
+
+                <div class="control-item" id="light-control" onclick="toggleLight()">
+                    <div class="control-icon">💡</div>
+                    <div class="control-name">Light</div>
+                    <div class="control-status" id="light-status">OFF</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+</html>
