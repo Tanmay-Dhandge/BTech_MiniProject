@@ -12,21 +12,14 @@ var client = new Paho.MQTT.Client(MQTT_BROKER_URL, MQTT_PORT, "web-client-" + pa
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;
 
-// --- DOM Elements ---
+// --- DOM Elements (all are now on this page) ---
 let statusText = document.getElementById('status');
 let statusDot = document.getElementById('status-dot');
-
-// Check if we are on the dashboard page
-let onDashboard = (document.getElementById('control-panel') !== null);
-let fanControl, lightControl, fanStatus, lightStatus, modeToggle;
-
-if (onDashboard) {
-    fanControl = document.getElementById("fan-control");
-    lightControl = document.getElementById("light-control");
-    fanStatus = document.getElementById("fan-status");
-    lightStatus = document.getElementById("light-status");
-    modeToggle = document.getElementById("mode-toggle");
-}
+let fanControl = document.getElementById("fan-control");
+let lightControl = document.getElementById("light-control");
+let fanStatus = document.getElementById("fan-status");
+let lightStatus = document.getElementById("light-status");
+let modeToggle = document.getElementById("mode-toggle");
 
 // Function to connect to MQTT
 function connectMqtt() {
@@ -72,9 +65,9 @@ function onMessageArrived(message) {
         const data = JSON.parse(message.payloadString);
 
         // Route message based on topic
-        if (message.destinationName === "project/sensors" && onDashboard) {
+        if (message.destinationName === "project/sensors") {
             updateSensorReadings(data);
-        } else if (message.destinationName === "project/status" && onDashboard) {
+        } else if (message.destinationName === "project/status") {
             updateControls(data);
         }
     } catch (e) {
@@ -165,9 +158,7 @@ function toggleMode() {
 window.addEventListener('load', () => {
     // Connect to MQTT
     connectMqtt();
-
-    // Add listener for the mode toggle *only* if on the dashboard
-    if (onDashboard) {
-        modeToggle.addEventListener("change", toggleMode);
-    }
+    
+    // Add listener for the mode toggle
+    modeToggle.addEventListener("change", toggleMode);
 });
