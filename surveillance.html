@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📹 Surveillance System</h1>
+            <div class="status">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="status">Connecting...</span>
+            </div>
+        </header>
+
+        <nav>
+            <button class="nav-btn" onclick="window.location.href='index.html'">Dashboard</button>
+            <button class="nav-btn active" onclick="window.location.href='surveillance.html'">Surveillance</button>
+        </nav>
+
+        <div class="video-card">
+            <h2>📹 Live Camera Feed</h2>
+            <div class="video-container">
+                <img src="YOUR_NGROK_URL_HERE/video" alt="Live Feed">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
