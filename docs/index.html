@@ -98,17 +98,22 @@
     <script src="script.js"></script>
 
     <script>
-       function showView(viewName) {
+       <script>
+function showView(viewName) {
     if (viewName === 'dashboard') {
         document.getElementById('dashboard-view').style.display = 'block';
         document.getElementById('surveillance-view').style.display = 'none';
         document.getElementById('btn-dashboard').classList.add('active');
         document.getElementById('btn-surveillance').classList.remove('active');
-    } else {
-        // Open your Pinggy video stream in a new tab
-        window.open('https://dlkcp-14-139-109-130.a.free.pinggy.link', '_blank');
+    } else if (viewName === 'surveillance') {
+        document.getElementById('dashboard-view').style.display = 'none';
+        document.getElementById('surveillance-view').style.display = 'block';
+        document.getElementById('btn-dashboard').classList.remove('active');
+        document.getElementById('btn-surveillance').classList.add('active');
     }
 }
+</script>
+
 
     </script>
 </body>
