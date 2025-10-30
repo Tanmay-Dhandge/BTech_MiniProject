@@ -21,6 +21,7 @@
             <button class="nav-btn" id="btn-surveillance" onclick="showView('surveillance')">Surveillance</button>
         </nav>
 
+        <!-- DASHBOARD -->
         <div id="dashboard-view">
             <div class="grid">
                 <div class="card">
@@ -85,36 +86,40 @@
             </div>
         </div>
 
+        <!-- SURVEILLANCE -->
         <div id="surveillance-view" style="display: none;">
             <div class="video-card">
                 <h2>📹 Live Camera Feed</h2>
-                <div class="video-container">
-                    <img src="https://dlkcp-14-139-109-130.a.free.pinggy.link" alt="Live Feed" referrerpolicy="no-referrer">
+                <div class="video-container" style="text-align:center;">
+                    <img id="liveFeed" 
+                         src="https://dlkcp-14-139-109-130.a.free.pinggy.link" 
+                         alt="Live Feed"
+                         style="width:90%;max-width:700px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.3);" 
+                         referrerpolicy="no-referrer"
+                         onerror="this.src=''; this.alt='Feed not available';">
                 </div>
             </div>
         </div>
 
-    </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"></script>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"></script>
     <script src="script.js"></script>
 
     <script>
-       <script>
-function showView(viewName) {
-    if (viewName === 'dashboard') {
-        document.getElementById('dashboard-view').style.display = 'block';
-        document.getElementById('surveillance-view').style.display = 'none';
-        document.getElementById('btn-dashboard').classList.add('active');
-        document.getElementById('btn-surveillance').classList.remove('active');
-    } else if (viewName === 'surveillance') {
-        document.getElementById('dashboard-view').style.display = 'none';
-        document.getElementById('surveillance-view').style.display = 'block';
-        document.getElementById('btn-dashboard').classList.remove('active');
-        document.getElementById('btn-surveillance').classList.add('active');
-    }
-}
-</script>
-
-
+        function showView(viewName) {
+            if (viewName === 'dashboard') {
+                document.getElementById('dashboard-view').style.display = 'block';
+                document.getElementById('surveillance-view').style.display = 'none';
+                document.getElementById('btn-dashboard').classList.add('active');
+                document.getElementById('btn-surveillance').classList.remove('active');
+            } else {
+                document.getElementById('dashboard-view').style.display = 'none';
+                document.getElementById('surveillance-view').style.display = 'block';
+                document.getElementById('btn-dashboard').classList.remove('active');
+                document.getElementById('btn-surveillance').classList.add('active');
+            }
+        }
     </script>
 </body>
 </html>
