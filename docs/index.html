@@ -98,25 +98,18 @@
     <script src="script.js"></script>
 
     <script>
-        function showView(viewName) {
-            if (viewName === 'dashboard') {
-                // Show dashboard, hide surveillance
-                document.getElementById('dashboard-view').style.display = 'block';
-                document.getElementById('surveillance-view').style.display = 'none';
-                
-                // Update active button
-                document.getElementById('btn-dashboard').classList.add('active');
-                document.getElementById('btn-surveillance').classList.remove('active');
-            } else {
-                // Show surveillance, hide dashboard
-                document.getElementById('dashboard-view').style.display = 'none';
-                document.getElementById('surveillance-view').style.display = 'block';
+       function showView(viewName) {
+    if (viewName === 'dashboard') {
+        document.getElementById('dashboard-view').style.display = 'block';
+        document.getElementById('surveillance-view').style.display = 'none';
+        document.getElementById('btn-dashboard').classList.add('active');
+        document.getElementById('btn-surveillance').classList.remove('active');
+    } else {
+        // Open your Pinggy video stream in a new tab
+        window.open('https://sxjhk-223-228-137-77.a.free.pinggy.link/video', '_blank');
+    }
+}
 
-                // Update active button
-                document.getElementById('btn-dashboard').classList.remove('active');
-                document.getElementById('btn-surveillance').classList.add('active');
-            }
-        }
     </script>
 </body>
 </html>
